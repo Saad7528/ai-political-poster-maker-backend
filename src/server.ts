@@ -18,6 +18,9 @@ import adminRoutes from './routes/admin.routes';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for Vercel / reverse proxy environments
+app.set('trust proxy', 1);
+
 // Enable Permissive CORS for all environments & Vercel domains
 app.use(
   cors({
