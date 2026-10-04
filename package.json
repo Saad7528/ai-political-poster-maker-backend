@@ -2,14 +2,22 @@
   "name": "ai-political-poster-backend",
   "version": "1.0.0",
   "description": "Express TypeScript Backend for AI Political Poster Maker",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "dev": "tsx watch src/server.ts",
     "seed": "tsx src/seeds/seedTemplates.ts"
   },
-  "keywords": ["ai", "gemini", "poster-maker", "bangladesh", "express", "typescript", "mongodb"],
+  "keywords": [
+    "ai",
+    "gemini",
+    "poster-maker",
+    "bangladesh",
+    "express",
+    "typescript",
+    "mongodb"
+  ],
   "author": "SadaSaad",
   "license": "ISC",
   "dependencies": {
@@ -34,6 +42,7 @@
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.13.9",
+    "@vercel/node": "^20.0.0",
     "esbuild": "^0.25.0",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
