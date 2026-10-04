@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { generatePoliticalCopy } from '../controllers/aiController.js';
-import { optionalAuth } from '../middlewares/auth.js';
+import { generatePoliticalCopy } from '../controllers/aiController';
+import { optionalAuth } from '../middlewares/auth';
 
 const router = Router();
 

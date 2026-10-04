@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middlewares/auth.js';
-import { Poster } from '../models/Poster.js';
-import { Template } from '../models/Template.js';
-import { PosterRenderService } from '../services/renderService.js';
+import { AuthRequest } from '../middlewares/auth';
+import { Poster } from '../models/Poster';
+import { Template } from '../models/Template';
+import { PosterRenderService } from '../services/renderService';
 
 export const createPoster = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

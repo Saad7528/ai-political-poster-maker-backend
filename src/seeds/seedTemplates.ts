@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { Template } from '../models/Template.js';
+import { Template } from '../models/Template';
 
 dotenv.config();
 

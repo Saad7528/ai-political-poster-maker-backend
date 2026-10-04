@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User.js';
-import { AuthRequest } from '../middlewares/auth.js';
+import { User } from '../models/User';
+import { AuthRequest } from '../middlewares/auth';
 
 const generateToken = (userId: string): string => {
   const secret = process.env.JWT_SECRET || 'rise_together_default_secret';

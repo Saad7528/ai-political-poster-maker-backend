@@ -4,7 +4,7 @@
   "description": "Express TypeScript Backend for AI Political Poster Maker",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc && esbuild src/server.ts --bundle --platform=node --target=node20 --format=cjs --outfile=api/index.js --external:mongoose --external:express --external:bcryptjs --external:jsonwebtoken --external:sharp",
+    "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "seed": "tsx src/seeds/seedTemplates.ts"

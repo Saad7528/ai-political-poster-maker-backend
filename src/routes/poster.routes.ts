@@ -5,8 +5,8 @@ import {
   getUserPosters,
   regeneratePoster,
   deletePoster,
-} from '../controllers/posterController.js';
-import { authenticate } from '../middlewares/auth.js';
+} from '../controllers/posterController';
+import { authenticate } from '../middlewares/auth';
 
 const router = Router();
 

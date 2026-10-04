@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { geminiManager } from '../config/gemini.js';
-import { GenerationLog } from '../models/GenerationLog.js';
+import { geminiManager } from '../config/gemini';
+import { GenerationLog } from '../models/GenerationLog';
 
 export interface PoliticalCopyParams {
   promptText?: string;

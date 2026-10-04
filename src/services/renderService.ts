@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { IPoster } from '../models/Poster.js';
-import { ITemplate } from '../models/Template.js';
+import { IPoster } from '../models/Poster';
+import { ITemplate } from '../models/Template';
 
 export class PosterRenderService {
   public static async renderPoster(

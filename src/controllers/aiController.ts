@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { GeminiService } from '../services/geminiService.js';
-import { AuthRequest } from '../middlewares/auth.js';
+import { GeminiService } from '../services/geminiService';
+import { AuthRequest } from '../middlewares/auth';
 
 export const generatePoliticalCopy = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

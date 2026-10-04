@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { createTemplate, updateTemplate, deleteTemplate } from '../controllers/templateController.js';
-import { getAllPostersAdmin } from '../controllers/posterController.js';
-import { authenticate, requireAdmin } from '../middlewares/auth.js';
+import { createTemplate, updateTemplate, deleteTemplate } from '../controllers/templateController';
+import { getAllPostersAdmin } from '../controllers/posterController';
+import { authenticate, requireAdmin } from '../middlewares/auth';
 
 const router = Router();
 

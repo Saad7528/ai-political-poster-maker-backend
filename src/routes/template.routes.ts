@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getTemplates, getTemplateById } from '../controllers/templateController.js';
+import { getTemplates, getTemplateById } from '../controllers/templateController';
 
 const router = Router();
 
