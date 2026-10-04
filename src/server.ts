@@ -70,6 +70,21 @@ app.use('/ai', aiRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/admin', adminRoutes);
 
+// Root API Info Route
+app.get('/api', (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    message: '🇧🇩 AI Political Poster Maker API Server is running.',
+    endpoints: {
+      health: '/api/health',
+      templates: '/api/templates',
+      auth: '/api/auth',
+      posters: '/api/posters',
+      ai: '/api/ai',
+    },
+  });
+});
+
 // Health Check
 app.get('/api/health', (_req: Request, res: Response) => {
   res.status(200).json({
