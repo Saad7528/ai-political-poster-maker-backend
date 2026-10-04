@@ -1,4 +1,3 @@
-import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 import { IPoster } from '../models/Poster.js';
@@ -12,9 +11,14 @@ export class PosterRenderService {
     const width = 1200;
     const height = 1600;
 
-    const posterDir = path.join(process.cwd(), 'uploads', 'posters');
+    const baseDir = process.env.VERCEL ? '/tmp' : process.cwd();
+    const posterDir = path.join(baseDir, 'uploads', 'posters');
     if (!fs.existsSync(posterDir)) {
-      fs.mkdirSync(posterDir, { recursive: true });
+      try {
+        fs.mkdirSync(posterDir, { recursive: true });
+      } catch {
+        // Read-only filesystem fallback
+      }
     }
 
     const filename = `poster-${poster._id}-${Date.now()}.png`;
@@ -117,20 +121,28 @@ export class PosterRenderService {
     </svg>
     `;
 
-    const svgBuffer = Buffer.from(svgOverlay);
+    try {
+      const sharpModule = await import('sharp');
+      const sharp = sharpModule.default || sharpModule;
+      const svgBuffer = Buffer.from(svgOverlay);
 
-    await sharp({
-      create: {
-        width,
-        height,
-        channels: 4,
-        background: { r: 4, g: 47, b: 46, alpha: 1 },
-      },
-    })
-      .composite([{ input: svgBuffer, top: 0, left: 0 }])
-      .png({ quality: 95 })
-      .toFile(outputPath);
+      await sharp({
+        create: {
+          width,
+          height,
+          channels: 4,
+          background: { r: 4, g: 47, b: 46, alpha: 1 },
+        },
+      })
+        .composite([{ input: svgBuffer, top: 0, left: 0 }])
+        .png({ quality: 95 })
+        .toFile(outputPath);
 
-    return `/uploads/posters/${filename}`;
+      return `/uploads/posters/${filename}`;
+    } catch {
+      // In serverless / client-first architecture, return data URI SVG fallback
+      const base64Svg = Buffer.from(svgOverlay).toString('base64');
+      return `data:image/svg+xml;base64,${base64Svg}`;
+    }
   }
 }
