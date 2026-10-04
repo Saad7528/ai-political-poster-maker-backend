@@ -17,7 +17,9 @@ export const createPoster = async (req: AuthRequest, res: Response): Promise<voi
       formData,
       topLeadersPhotos,
       candidatePhotoUrl,
+      candidateAdjustments,
       partySymbolUrl,
+      generatedImageUrl: clientGeneratedImageUrl,
       aiEnhanced,
     } = req.body;
 
@@ -29,25 +31,45 @@ export const createPoster = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    const template = await Template.findById(templateId);
-    if (!template) {
-      res.status(404).json({
-        success: false,
-        message: 'নির্বাচিত টেমপ্লেট খুঁজে পাওয়া যায়নি।',
-      });
-      return;
+    let template = null;
+    try {
+      template = await Template.findById(templateId);
+    } catch {
+      template = null;
     }
+
+    if (!template) {
+      template = await Template.findOne({ isActive: true });
+    }
+
+    const actualTemplateId = template?._id || templateId;
+
+    const mergedFormData = {
+      ...formData,
+      candidateAdjustments: candidateAdjustments || formData.candidateAdjustments || null,
+    };
 
     const newPoster = await Poster.create({
       userId,
-      templateId,
-      formData,
+      templateId: actualTemplateId,
+      formData: mergedFormData,
       topLeadersPhotos: topLeadersPhotos || [],
       candidatePhotoUrl: candidatePhotoUrl || '',
+      candidateAdjustments: candidateAdjustments || formData.candidateAdjustments || null,
       partySymbolUrl: partySymbolUrl || '',
-      status: 'generating',
+      generatedImageUrl: clientGeneratedImageUrl || '',
+      status: clientGeneratedImageUrl ? 'completed' : 'generating',
       aiEnhanced: !!aiEnhanced,
     });
+
+    if (clientGeneratedImageUrl) {
+      res.status(201).json({
+        success: true,
+        message: 'পোস্টার সফলভাবে তৈরি ও সংরক্ষিত হয়েছে!',
+        data: newPoster,
+      });
+      return;
+    }
 
     try {
       const generatedImageUrl = await PosterRenderService.renderPoster(newPoster, template);

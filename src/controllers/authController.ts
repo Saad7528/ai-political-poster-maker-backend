@@ -148,3 +148,58 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
     });
   }
 };
+
+export const syncOAuthUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, email, avatarUrl } = req.body;
+
+    if (!email) {
+      res.status(400).json({ success: false, message: 'ইমেইল আবশ্যক।' });
+      return;
+    }
+
+    let user = await User.findOne({ emailOrPhone: email.toLowerCase() });
+
+    if (!user) {
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(Math.random().toString(36), salt);
+      user = await User.create({
+        name: name || email.split('@')[0],
+        emailOrPhone: email.toLowerCase(),
+        passwordHash,
+        avatarUrl: avatarUrl || '',
+        role: email.toLowerCase() === 'admin@politicalposter.bd' ? 'admin' : 'user',
+      });
+    } else {
+      if (avatarUrl && !user.avatarUrl) {
+        user.avatarUrl = avatarUrl;
+        await user.save();
+      }
+    }
+
+    const token = generateToken(user._id.toString());
+
+    res.status(200).json({
+      success: true,
+      message: 'OAuth ইউজার সফলভাবে সিঙ্ক হয়েছে।',
+      data: {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          emailOrPhone: user.emailOrPhone,
+          role: user.role,
+          avatarUrl: user.avatarUrl,
+        },
+      },
+    });
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : 'OAuth sync error';
+    res.status(500).json({
+      success: false,
+      message: 'OAuth সিঙ্ক্রোনাইজেশনে সমস্যা হয়েছে।',
+      error: errorMsg,
+    });
+  }
+};
+

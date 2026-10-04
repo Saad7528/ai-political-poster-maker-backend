@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { seedAdmin } from '../seeds/seedAdmin';
 
 export const connectDB = async (): Promise<void> => {
   // If already connected, reuse existing connection (Serverless Best Practice)
@@ -18,9 +19,12 @@ export const connectDB = async (): Promise<void> => {
     });
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host} / Database: ${conn.connection.name}`);
+    // Auto seed admin if not exists
+    await seedAdmin();
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown database connection error';
     console.error(`❌ MongoDB Connection Error: ${errorMsg}`);
     // Do not call process.exit(1) in serverless environments
   }
 };
+
