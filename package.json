@@ -2,11 +2,11 @@
   "name": "ai-political-poster-backend",
   "version": "1.0.0",
   "description": "Express TypeScript Backend for AI Political Poster Maker",
-  "main": "dist/src/server.js",
+  "main": "dist/src/local.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/src/server.js",
-    "dev": "tsx watch src/server.ts",
+    "start": "node dist/src/local.js",
+    "dev": "tsx watch src/local.ts",
     "seed": "tsx src/seeds/seedTemplates.ts"
   },
   "keywords": [
