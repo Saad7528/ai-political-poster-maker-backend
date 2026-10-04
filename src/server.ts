@@ -18,32 +18,29 @@ import adminRoutes from './routes/admin.routes.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
-
-// Middleware
+// Enable Permissive CORS for all environments & Vercel domains
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, postman, curl)
-      if (!origin) return callback(null, true);
-      const frontendUrl = process.env.FRONTEND_URL;
-      if (
-        origin === 'http://localhost:3000' ||
-        origin === 'http://localhost:3001' ||
-        (frontendUrl && origin === frontendUrl) ||
-        origin.endsWith('.vercel.app')
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, true);
-    },
+    origin: true,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   })
 );
+
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 app.use(morgan('dev'));
+
+// Serverless DB Connection Middleware
+app.use(async (_req: Request, _res: Response, next: NextFunction) => {
+  try {
+    await connectDB();
+  } catch (err: unknown) {
+    console.error('DB connect middleware error:', err);
+  }
+  next();
+});
 
 // Static uploads serving
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
@@ -51,14 +48,14 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 // Rate Limiter
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   message: {
     success: false,
     message: 'অতিরিক্ত রিকোয়েস্ট পাঠানো হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।',
   },
 });
 
-// API Routes
+// API Routes (Supporting both /api prefix and root rewrite)
 app.use('/api/auth', authRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/posters', apiLimiter, posterRoutes);
@@ -66,8 +63,24 @@ app.use('/api/ai', apiLimiter, aiRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.use('/auth', authRoutes);
+app.use('/templates', templateRoutes);
+app.use('/posters', apiLimiter, posterRoutes);
+app.use('/ai', aiRoutes);
+app.use('/upload', uploadRoutes);
+app.use('/admin', adminRoutes);
+
 // Health Check
 app.get('/api/health', (_req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'online',
+    project: 'AI Political Poster Maker API',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'online',
     project: 'AI Political Poster Maker API',
